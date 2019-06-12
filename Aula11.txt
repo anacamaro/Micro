@@ -1,427 +1,162 @@
-1. Defina a função void Atraso(volatile unsigned int x); que fornece um atraso de 'x' milissegundos. Utilize o Timer_A para a contagem de tempo, e assuma que o SMCLK já foi configurado para funcionar a 1 MHz. Esta função poderá ser utilizada diretamente nas outras questões desta prova.
+#!/usr/bin/env python
+# Software License Agreement (BSD License)
+#
+# Copyright (c) 2008, Willow Garage, Inc.
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+#  * Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#  * Redistributions in binary form must reproduce the above
+#    copyright notice, this list of conditions and the following
+#    disclaimer in the documentation and/or other materials provided
+#    with the distribution.
+#  * Neither the name of Willow Garage, Inc. nor the names of its
+#    contributors may be used to endorse or promote products derived
+#    from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+# FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+# COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+# INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+# BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+# ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+#
+# Revision $Id$
 
-void atraso(volatile unsigned int x)
-{
-  TACCR0 = 1000-1;
-  TACTL |= TACLR;
-  TACTL = TASSEL_2 + ID_0 + MC_1;
-  while(x>0)
-  {
-    x--;
-    while((TACTL & TAIFG) == 0);
-    TACTL &=~TAIFG;
-  }
-  TACTL = MC_0;
-}
+## Simple talker demo that published std_msgs/Strings messages
+## to the 'chatter' topic
 
-2. Pisque os LEDs da Launchpad numa frequência de 100 Hz.
+import rospy #O pacote rospy Ã© o responsÃ¡vel por criar uma interface para a criaÃ§Ã£o de nÃ³s usando Python. Ã‰ um pacote bÃ¡sico se vocÃª estiver criando pacotes que utilizem scripts escritos em Python
+import math 
 
-#include<msp430g2553.h>
-
-void atraso(volatile unsigned int x)
-{
-  TACCR0 = 1000-1;
-  TACTL |= TACLR;
-  TACTL = TASSEL_2 + ID_0 + MC_1;
-  while(x>0)
-  {
-    x--;
-    while((TACTL & TAIFG) == 0);
-    TACTL &=~TAIFG;
-  }
-  TACTL = MC_0;
-}
-
-void main(void)
-  {
-    volatile int i, x;
-    WDTCTL = WDTPW + WDTHOLD;
-    P1DIR = BIT6 + BIT0;
-    P1OUT = BIT6 + BIT0;
-    x = 10;    //100 Hz ou 10 milisegundos de delay entre uma piscada e outra
-    while(1)
-    {
-        P1OUT ^= BIT6 + BIT0;
-        atraso(x);
-    }
-  }
+from std_msgs.msg import String 
+from sensor_msgs.msg import Imu
+import numpy as np
 
 
-3. Pisque os LEDs da Launchpad numa frequência de 20 Hz.
+import smbus            #import SMBus module of I2C
+from time import sleep          #import
 
-#include<msp430g2553.h>
-
-void atraso(volatile unsigned int x)
-{
-  TACCR0 = 1000-1;
-  TACTL |= TACLR;
-  TACTL = TASSEL_2 + ID_0 + MC_1;
-  while(x>0)
-  {
-    x--;
-    while((TACTL & TAIFG) == 0);
-    TACTL &=~TAIFG;
-  }
-  TACTL = MC_0;
-}
-
-void main(void)
-  {
-    volatile int i, x;
-    WDTCTL = WDTPW + WDTHOLD;
-    P1DIR = BIT6 + BIT0;
-    P1OUT = BIT6 + BIT0;
-    x = 50;    //20 Hz ou 50 milisegundos de delay entre uma piscada e outra
-    while(1)
-    {
-        P1OUT ^= BIT6 + BIT0;
-        atraso(x);
-    }
-  }
-
-4. Pisque os LEDs da Launchpad numa frequência de 1 Hz.
-
-#include<msp430g2553.h>
-
-void atraso(volatile unsigned int x)
-{
-  TACCR0 = 1000-1;
-  TACTL |= TACLR;
-  TACTL = TASSEL_2 + ID_0 + MC_1;
-  while(x>0)
-  {
-    x--;
-    while((TACTL & TAIFG) == 0);
-    TACTL &=~TAIFG;
-  }
-  TACTL = MC_0;
-}
-
-void main(void)
-  {
-    volatile int i, x;
-    WDTCTL = WDTPW + WDTHOLD;
-    P1DIR = BIT6 + BIT0;
-    P1OUT = BIT6 + BIT0;
-    x = 1000;    //1 Hz ou 1000 milisegundos de delay entre uma piscada e outra
-    while(1)
-    {
-        P1OUT ^= BIT6 + BIT0;
-        atraso(x);
-    }
-  }
-
-5. Pisque os LEDs da Launchpad numa frequência de 0,5 Hz.
-
-#include<msp430g2553.h>
-
-void atraso(volatile unsigned int x)
-{
-  TACCR0 = 1000-1;
-  TACTL |= TACLR;
-  TACTL = TASSEL_2 + ID_0 + MC_1;
-  while(x>0)
-  {
-    x--;
-    while((TACTL & TAIFG) == 0);
-    TACTL &=~TAIFG;
-  }
-  TACTL = MC_0;
-}
-
-void main(void)
-  {
-    volatile int i, x;
-    WDTCTL = WDTPW + WDTHOLD;
-    P1DIR = BIT6 + BIT0;
-    P1OUT = BIT6 + BIT0;
-    x = 2000;    //0,5 Hz ou 2000 milisegundos de delay entre uma piscada e outra
-    while(1)
-    {
-        P1OUT ^= BIT6 + BIT0;
-        atraso(x);
-    }
-  }
-
-6. Repita as questões 2 a 5 usando a interrupção do Timer A para acender ou apagar os LEDs.
+#some MPU6050 Registers and their Address
+#Armazena o valor dos sensores nas variaveis correspondentes
+PWR_MGMT_1   = 0x6B
+SMPLRT_DIV   = 0x19
+CONFIG       = 0x1A
+GYRO_CONFIG  = 0x1B
+INT_ENABLE   = 0x38
+ACCEL_XOUT_H = 0x3B
+ACCEL_YOUT_H = 0x3D
+ACCEL_ZOUT_H = 0x3F
+GYRO_XOUT_H  = 0x43
+GYRO_YOUT_H  = 0x45
+GYRO_ZOUT_H  = 0x47
 
 
-  2-
-  
-  #include "msp430g2231.h"   
-
-void main(void)
-{
-  WDTCTL = WDTPW + WDTHOLD;       
-  CCTL0 = CCIE;                            
-  TACTL = TASSEL_2 + MC_1 + ID_3;          
-  CCR0 =  1;                       
-  P1OUT &= 0x00;               
-  P1DIR &= 0x00;               
-  P1DIR |= BIT0 + BIT6;            
-  _BIS_SR(CPUOFF + GIE);           
-  while(1)                                                                                
-  {}
-} 
-#pragma vector=TIMERA0_VECTOR 
-__interrupt void Timer_A (void) 
-{   
-   long int i;
-   long int x;
-   x = 650; //65*10
-   for(i=0;i<x;i++);
-   P1OUT ^= BIT0 + BIT6;                                                                                 
-}
-  
-  3-
-  
-  #include "msp430g2231.h"   
-
-void main(void)
-{
-  WDTCTL = WDTPW + WDTHOLD;       
-  CCTL0 = CCIE;                            
-  TACTL = TASSEL_2 + MC_1 + ID_3;          
-  CCR0 =  1;                       
-  P1OUT &= 0x00;               
-  P1DIR &= 0x00;               
-  P1DIR |= BIT0 + BIT6;            
-  _BIS_SR(CPUOFF + GIE);           
-  while(1)                                                                                
-  {}
-} 
-#pragma vector=TIMERA0_VECTOR 
-__interrupt void Timer_A (void) 
-{   
-   long int i;
-   long int x;
-   x = 3250; //65*50
-   for(i=0;i<x;i++);
-   P1OUT ^= BIT0 + BIT6;                                                                                 
-}
-  
-  
-  4-
-  
-  #include "msp430g2231.h"   
-
-void main(void)
-{
-  WDTCTL = WDTPW + WDTHOLD;       
-  CCTL0 = CCIE;                            
-  TACTL = TASSEL_2 + MC_1 + ID_3;          
-  CCR0 =  1;                       
-  P1OUT &= 0x00;               
-  P1DIR &= 0x00;               
-  P1DIR |= BIT0 + BIT6;            
-  _BIS_SR(CPUOFF + GIE);           
-  while(1)                                                                                
-  {}
-} 
-#pragma vector=TIMERA0_VECTOR 
-__interrupt void Timer_A (void) 
-{   
-   long int i;
-   long int x;
-   x = 65000; //65*1000
-   for(i=0;i<x;i++);
-   P1OUT ^= BIT0 + BIT6;                                                                                 
-}
-
-5-
-
-#include "msp430g2231.h"   
-
-void main(void)
-{
-  WDTCTL = WDTPW + WDTHOLD;       
-  CCTL0 = CCIE;                            
-  TACTL = TASSEL_2 + MC_1 + ID_3;          
-  CCR0 =  1;                       
-  P1OUT &= 0x00;               
-  P1DIR &= 0x00;               
-  P1DIR |= BIT0 + BIT6;            
-  _BIS_SR(CPUOFF + GIE);           
-  while(1)                                                                                
-  {}
-} 
-#pragma vector=TIMERA0_VECTOR 
-__interrupt void Timer_A (void) 
-{   
-   long int i;
-   long int x;
-   x = 130000; //65*2000
-   for(i=0;i<x;i++);
-   P1OUT ^= BIT0 + BIT6;                                                                                 
-}
-
-7. Defina a função void paralelo_para_serial(void); que lê o byte de entrada via porta P1 e transmite os bits serialmente via pino P2.0. Comece com um bit em nivel alto, depois os bits na ordem P1.0 - P1.1 - … - P1.7 e termine com um bit em nível baixo. Considere um período de 1 ms entre os bits.
-
-#include<msp430g2553.h>
-
-void atraso(volatile unsigned int x)
-{
-  TACCR0 = 1000-1;
-  TACTL |= TACLR;
-  TACTL = TASSEL_2 + ID_0 + MC_1;
-  while(x>0)
-  {
-    x--;
-    while((TACTL & TAIFG) == 0);
-    TACTL &=~TAIFG;
-  }
-  TACTL = MC_0;
-}
-
-
-void paralelo_para_serial()
-{
-  int a0, a1, a2, a3, a4, a5, a6, a7;
-  int s[9];
-  volatile unsigned int x;
-  int i;
-  x = 1;
-  if(a0 & P1IN)
-  {
-    s[1] = a0; 
-  }
-  if(a1 & P1IN)
-  {
-    s[2] = a1; 
-  }
-  if(a2 & P1IN)
-  {
-    s[3] = a2; 
-  }
-  if(a3 & P1IN)
-  {
-    s[4] = a3; 
-  }
-  if(a4 & P1IN)
-  {
-    s[5] = a4; 
-  }
-  if(a5 & P1IN)
-  {
-    s[6] = a5; 
-  }
-  if(a6 & P1IN)
-  {
-    s[7] = a6; 
-  }
-  if(a7 & P1IN)
-  {
-    s[8] = a7; 
-  }
-  s[0] = 1;
-  s[9] = 0;
-  for(i=0;i<=9;i++)
-  {
-    P2OUT = s[i];
-    atraso(x);
-  }
-}
-
-
-
-
-void main(void)
-  {
-    WDTCTL = WDTPW + WDTHOLD;
-    P1DIR = BIT6 + BIT0;
-    P1OUT = BIT6 + BIT0;
-    while(1)
-    {
-        paralelo_para_serial();
-    }
-  }
-
-
-8. Faça o programa completo que lê um byte de entrada serialmente via pino P2.0 e transmite este byte via porta P1. O sinal serial começa com um bit em nivel alto, depois os bits na ordem 0-7 e termina com um bit em nível baixo. Os pinos P1.0-P1.7 deverão corresponder aos bits 0-7, respectivamente. Considere um período de 1 ms entre os bits.
-
-#include<msp430g2553.h>
-
-void atraso(volatile unsigned int x)
-{
-  TACCR0 = 1000-1;
-  TACTL |= TACLR;
-  TACTL = TASSEL_2 + ID_0 + MC_1;
-  while(x>0)
-  {
-    x--;
-    while((TACTL & TAIFG) == 0);
-    TACTL &=~TAIFG;
-  }
-  TACTL = MC_0;
-}
-
-
-
-
-
-void main(void)
-  {
-    volatile unsigned int x;
-    WDTCTL = WDTPW + WDTHOLD;
-    x = 1;
-    while(1)
-    {
-      if (BIT0 & P2IN)
-      {
-        P1OUT = (P2IN + 1) + BIT0;
-        atraso(x);
-        P1OUT = (P2IN + 3) + BIT1;
-        atraso(x);
-        P1OUT = (P2IN + 7) + BIT2;
-        atraso(x);
-        P1OUT = (P2IN + 15) + BIT3;
-        atraso(x);
-        P1OUT = (P2IN + 31) + BIT4;
-        atraso(x);
-        P1OUT = (P2IN + 63) + BIT5;
-        atraso(x);
-        P1OUT = (P2IN + 127) + BIT6;
-        atraso(x);
-        P1OUT = (P2IN + 255) + BIT7;
-        atraso(x);
-      }
-    }
+def MPU_Init():
+    #write to sample rate register
+    bus.write_byte_data(Device_Address, SMPLRT_DIV, 7)
     
-  }
-9. Defina a função void ConfigPWM(volatile unsigned int freqs, volatile unsigned char ciclo_de_trabalho); para configurar e ligar o Timer_A em modo de comparação. Considere que o pino P1.6 já foi anteriormente configurado como saída do canal 1 de comparação do Timer_A, que somente os valores {100, 200, 300, …, 1000} Hz são válidos para a frequência, que somente os valores {0, 25, 50, 75, 100} % são válidos para o ciclo de trabalho, e que o sinal de clock SMCLK do MSP430 está operando a 1 MHz.
+    #Write to power management register
+    bus.write_byte_data(Device_Address, PWR_MGMT_1, 1)
+    
+    #Write to Configuration register
+    bus.write_byte_data(Device_Address, CONFIG, 0)
+    
+    #Write to Gyro configuration register
+    bus.write_byte_data(Device_Address, GYRO_CONFIG, 24)
+    
+    #Write to interrupt enable register
+    bus.write_byte_data(Device_Address, INT_ENABLE, 1)
 
-void ConfigPWM(volatile unsigned int freqs,volatile unsigned char ciclo_de_trabalho)
-{
-  volatile unsigned int x, y;
-  x = 1000/freqs;
-  y = x/4;
-  if(ciclo_de_trabalho == '0')
-  {
-    P1OUT = 0;
-  }
-  if(ciclo_de_trabalho == '25')
-  {
-    P1OUT = BIT6;
-    atraso(y);
-    P1OUT = 0;
-    atraso(3*y);
-  }
-  if(ciclo_de_trabalho == '50')
-  {
-    P1OUT = BIT6;
-    atraso(2*y);
-    P1OUT = 0;
-    atraso(2*y);
-  }
-  if(ciclo_de_trabalho == '75')
-  {
-    P1OUT = BIT6;
-    atraso(3*y);
-    P1OUT = 0;
-    atraso(y);
-  }
-  if(ciclo_de_trabalho == '100')
-  {
-    P1OUT = BIT6;
-  }
-}
+def read_raw_data(addr):
+    #Accelero and Gyro value are 16-bit
+        high = bus.read_byte_data(Device_Address, addr)
+        low = bus.read_byte_data(Device_Address, addr+1)
+    
+        #concatenate higher and lower value
+        value = ((high << 8) | low)
+        
+        #to get signed value from mpu6050
+        if(value > 32768):
+                value = value - 65536
+        return value
+
+#    print ("Gx=%.2f" %Gx, u'\u00b0'+ "/s", "\tGy=%.2f" %Gy, u'\u00b0'+ "/s", "\tGz=%.2f" %Gz, u'\u00b0'+ "/s", "\tAx=%.2f g" %Ax, "\tAy=%.2f g" %Ay, "\tAz=%.2f g" %Az)     
+    
+
+def imupub():
+    pub = rospy.Publisher('/mpu6050', String, queue_size=10)
+    rospy.init_node('tcc', anonymous=True)
+    rate = rospy.Rate(10) # 10hz
+    while not rospy.is_shutdown():
+
+        #Read Accelerometer raw value
+        acc_x = read_raw_data(ACCEL_XOUT_H)
+        acc_y = read_raw_data(ACCEL_YOUT_H)
+        acc_z = read_raw_data(ACCEL_ZOUT_H)
+    
+        #Read Gyroscope raw value
+        gyro_x = read_raw_data(GYRO_XOUT_H)
+        gyro_y = read_raw_data(GYRO_YOUT_H)
+        gyro_z = read_raw_data(GYRO_ZOUT_H)
+    
+        #Full scale range +/- 250 degree/C as per sensitivity scale factor
+        #calculo para converter o valor bruto do acelerometro e giroscÃ³pio
+        Ax = acc_x/16384.0
+        Ay = acc_y/16384.0
+        Az = acc_z/16384.0
+        Gx = gyro_x/131.0
+        Gy = gyro_y/131.0
+        Gz = gyro_z/131.0
+ 
+        
+        angle_pitch = Gx * 0.0000611 # Calculate the traveled pitch angle and add this to the angle_pitch variable
+        angle_roll = Gy * 0.0000611  #Calculate the traveled roll angle and add this to the angle_roll variable
+        angle_pitch = angle_roll * math.sin(Gz * 0.000001066)  #If the IMU has yawed transfer the roll angle to the pitch angel
+        angle_roll = angle_pitch * math.sin(Gz * 0.000001066)  #If the IMU has yawed transfer the pitch angle to the roll angel
+
+        #Accelerometer angle calculations
+     
+        acc_total_vector = math.sqrt((Ax * Ax) + (Ay * Ay) + (Az * Az)) #Calculate the total accelerometer vector
+        angle_pitch_acc = np.arcsin(Ay / acc_total_vector) * 57.296   #Calculate the pitch angle
+        angle_roll_acc = np.arcsin(Ax / acc_total_vector) * -57.296    #Calculate the roll angle
+
+        #Calibrar automaticamente
+        angle_pitch_acc -= 1.1 # Accelerometer calibration value for pitch
+        angle_roll_acc -= -2.73 #Accelerometer calibration value for roll
+
+
+
+
+        msg = "angle_pitch_acc: %.2f angle_roll_acc: %.2f" %(angle_pitch_acc,angle_roll_acc)
+
+       
+
+        rospy.loginfo(msg)
+        pub.publish(msg)
+        rate.sleep()
+
+
+
+if __name__ == '__main__':
+    try:
+        bus = smbus.SMBus(1)     # or bus = smbus.SMBus(0) for older version boards
+        Device_Address = 0x68   # MPU6050 device address
+
+        MPU_Init()
+
+        print (" Reading Data of Gyroscope and Accelerometer")
+
+        imupub()
+    except rospy.ROSInterruptException:
+        pass
